@@ -1,0 +1,73 @@
+@import play.api.mvc.Flash
+@(tasks: List[Task])(implicit request: Request[AnyContent], flash: Flash)
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ToDo List</title>
+</head>
+<body>
+<h1>Your To-Do List</h1>
+
+<ul>
+  @for(task <- tasks) {
+  <li>@task.id. @task.description - @if(task.isCompleted) {Completed} else {Pending}
+    <a href="@routes.HomeController.completeTask(task.id)">Complete</a> |
+    <a href="@routes.HomeController.removeTask(task.id)">Remove</a>
+  </li>
+  }
+</ul>
+
+<form action="@routes.HomeController.addTask()" method="GET">
+  <input type="text" name="description" placeholder="Описание задачи" required>
+  <button type="submit">Добавить задачу</button>
+</form>
+
+<form action="@routes.HomeController.addNewTasksToDB()" method="GET">
+  <button type="submit">Добавить задачи в БД</button>
+</form>
+
+<form action="@routes.HomeController.loadTasksFromDb()" method="GET">
+  <button type="submit">Загрузить задачи из БД</button>
+</form>
+
+<form action="@routes.HomeController.refreshTasksInDb()" method="GET">
+  <button type="submit">Обновить БД</button>
+</form>
+
+<form action="@routes.HomeController.clearTasks()" method="GET">
+  <button type="submit">Очистить задачи</button>
+</form>
+
+@if(flash.get("success").isDefined) {
+<div class="alert alert-success">
+  @flash.get("success")
+</div>
+}
+@if(flash.get("error").isDefined) {
+<div class="alert alert-danger">
+  @flash.get("error")
+</div>
+}
+
+<style>
+  .alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+  }
+  .alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+  }
+  .alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+  }
+</style>
+</body>
+</html>
